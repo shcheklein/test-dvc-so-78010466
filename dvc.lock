@@ -1,0 +1,56 @@
+schema: '2.0'
+stages:
+  load_data:
+    cmd: python src/load_data.py --config=config/params.yaml
+    deps:
+    - path: house_prices/train.csv
+      hash: md5
+      md5: b9167f5303eea1f8a2c8cf9f16c02e04
+      size: 12
+    - path: src/get_data.py
+      hash: md5
+      md5: e2e9416cfcab9da95c4694d200ecabd6
+      size: 18
+    - path: src/load_data.py
+      hash: md5
+      md5: c27efb0acde87eb99b9bf79f0e9671dd
+      size: 244
+    outs:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: b9167f5303eea1f8a2c8cf9f16c02e04
+      size: 12
+  train_and_evaluate:
+    cmd: src/train_and_evaluate.sh --config=config/params.yaml
+    deps:
+    - path: data/processed/test_house_prices.csv
+      hash: md5
+      md5: b9167f5303eea1f8a2c8cf9f16c02e04
+      size: 12
+    - path: data/processed/train_house_prices.csv
+      hash: md5
+      md5: b9167f5303eea1f8a2c8cf9f16c02e04
+      size: 12
+    - path: src/train_and_evaluate.sh
+      hash: md5
+      md5: d51356cc1c2c6875d87b59c542e62da0
+      size: 123
+    params:
+      params.yaml:
+        estimators.RandomForestRegressor.params.max_depth: 20
+        estimators.RandomForestRegressor.params.max_features: 0.5
+        estimators.RandomForestRegressor.params.min_samples_split: 2
+        estimators.RandomForestRegressor.params.n_estimators: 200
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: 458d5f1afc81ae7291a7aaad852dc12a
+      size: 6
+    - path: reports/params.json
+      hash: md5
+      md5: 88e292b9447efefa8460bb2b17d043c0
+      size: 7
+    - path: reports/scores.json
+      hash: md5
+      md5: 950ceafc91fd999844a330f3968943c2
+      size: 8
